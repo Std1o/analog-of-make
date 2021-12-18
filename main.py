@@ -1,5 +1,6 @@
 import os
 from collections import deque
+import hashlib
 
 gray = 0
 black = 1
@@ -62,10 +63,39 @@ class Make:
                 os.system(cmd)
 
 
-a = Make("makefile2")
+def get_hash(fileName):
+    with open(fileName, 'rb') as f:
+        hsh = hashlib.sha1()
+        while True:
+            data = f.read(2048)
+            if not data:
+                break
+            hsh.update(data)
+        rez = hsh.hexdigest()
+        return rez
 
+
+def get_saved_data():
+    try:
+        with open("saved_hash.txt") as file:
+            return file.read()
+    except:
+        pass
+
+
+def save_data(hash):
+    with open("saved_hash.txt", 'w') as file:
+        file.write(hash)
+
+
+a = Make("makefile1")
 a.parse()
-
 a.sort()
-
 a.run()
+
+if get_saved_data() != get_hash('civgraph.txt'):
+    b = Make("makefile2")
+    b.parse()
+    b.sort()
+    b.run()
+save_data(get_hash('civgraph.txt'))
