@@ -1,0 +1,23 @@
+zombie: body head left_hand right_hand left_leg right_leg
+    echo Получаем зомби
+
+left_leg: right_hand
+    echo Пришиваем левую ногу
+
+right_leg:
+    echo Пришиваем левую ногу
+
+human: zombie
+    echo Вставляем мозг и оживляем зомби
+
+head: body
+    echo Пришиваем голову
+
+body:
+    echo Берем туловище
+
+left_hand: head
+    echo Пришиваем левую руку
+
+right_hand: left_hand
+    echo Пришиваем правую руку

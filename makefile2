@@ -1,0 +1,2 @@
+visual:
+	cat civgraph.txt | dot -Tsvg > output.svg
