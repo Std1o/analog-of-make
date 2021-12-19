@@ -44,7 +44,6 @@ class Make:
                 file.write(s + "\n")
 
     def __init__(self, path_to_makefile: str):
-
         with open(path_to_makefile, "r") as f:
             self.makefile = f.read()
 
@@ -90,13 +89,16 @@ class Make:
         for task in self.tasks:
             cmds = self.makefile_parsed[task]["doing"]
             for cmd in cmds:
-                tmp = cmd.split('cat')
-                if len(tmp) > 1:
-                    file_name = tmp[1].strip().split(' ', 1)[0]
-                    if self.get_saved_data() and self.get_hash(file_name) in self.get_saved_data():
-                        return
-                    self.save_data(self.get_hash(file_name))
-                os.system(cmd)
+                self.run_command(cmd)
+
+    def run_command(self, cmd):
+        tmp = cmd.split('cat')
+        if len(tmp) > 1 and '>' in cmd:
+            file_name = tmp[1].strip().split(' ', 1)[0]
+            if self.get_saved_data() and self.get_hash(file_name) in self.get_saved_data():
+                return
+            self.save_data(self.get_hash(file_name))
+        os.system(cmd)
 
 
 a = Make("text")
