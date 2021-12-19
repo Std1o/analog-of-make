@@ -16,11 +16,10 @@ class Make:
             self.makefile = f.read()
 
     def parse(self):
-        b = self.makefile.split('\n')
-        b = [b for b in b if b]
+        lines = self.makefile.split('\n')
+        lines = [i for i in lines if i]  # removing empty items
         ans = {}
-        f = 0
-        for x in b:
+        for x in lines:
             if ':' in x:
                 g = x.split()
 
@@ -88,7 +87,7 @@ def save_data(hash):
         file.write(hash)
 
 
-a = Make("makefile1")
+a = Make("text")
 a.parse()
 a.sort()
 a.run()
