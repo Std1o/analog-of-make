@@ -3,7 +3,6 @@ dress: trousers shoes jacket
 
 jacket: pullover
 	echo "Putting on jacket."
-	echo "Putting on jacket351354."
 
 pullover: shirt
 	echo "Putting on pullover."

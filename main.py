@@ -101,7 +101,7 @@ class Make:
         os.system(cmd)
 
 
-a = Make("text")
+a = Make("makefile1")
 a.parse()
 a.sort()
 a.run()
