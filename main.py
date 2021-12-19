@@ -11,7 +11,40 @@ class Make:
     makefile = ""
     tasks = []
 
+    def get_hash(self, fileName):
+        with open(fileName.strip(), 'rb') as f:
+            hsh = hashlib.sha1()
+            while True:
+                data = f.read(2048)
+                if not data:
+                    break
+                hsh.update(data)
+            rez = hsh.hexdigest()
+            return rez
+
+    def get_saved_data(self):
+        try:
+            hashs = []
+            with open("saved_hash.txt") as file:
+                for line in file:
+                    hashs.append(line.strip())
+                return hashs
+        except:
+            pass
+
+    def save_data(self, hash):
+        hashs = self.get_saved_data()
+        if hashs and hash not in hashs:
+            hashs.append(hash)
+        with open("saved_hash.txt", 'w') as file:
+            if not hashs:
+                file.write(hash + "\n")
+                return
+            for s in hashs:
+                file.write(s + "\n")
+
     def __init__(self, path_to_makefile: str):
+
         with open(path_to_makefile, "r") as f:
             self.makefile = f.read()
 
@@ -22,7 +55,6 @@ class Make:
         for x in lines:
             if ':' in x:
                 g = x.split()
-
                 target = g[0][:-1]
 
                 dependency = g[1:]
@@ -57,34 +89,14 @@ class Make:
     def run(self):
         for task in self.tasks:
             cmds = self.makefile_parsed[task]["doing"]
-
             for cmd in cmds:
+                tmp = cmd.split('cat')
+                if len(tmp) > 1:
+                    file_name = tmp[1].strip().split(' ', 1)[0]
+                    if self.get_saved_data() and self.get_hash(file_name) in self.get_saved_data():
+                        return
+                    self.save_data(self.get_hash(file_name))
                 os.system(cmd)
-
-
-def get_hash(fileName):
-    with open(fileName, 'rb') as f:
-        hsh = hashlib.sha1()
-        while True:
-            data = f.read(2048)
-            if not data:
-                break
-            hsh.update(data)
-        rez = hsh.hexdigest()
-        return rez
-
-
-def get_saved_data():
-    try:
-        with open("saved_hash.txt") as file:
-            return file.read()
-    except:
-        pass
-
-
-def save_data(hash):
-    with open("saved_hash.txt", 'w') as file:
-        file.write(hash)
 
 
 a = Make("text")
@@ -92,9 +104,7 @@ a.parse()
 a.sort()
 a.run()
 
-if get_saved_data() != get_hash('civgraph.txt'):
-    b = Make("makefile2")
-    b.parse()
-    b.sort()
-    b.run()
-save_data(get_hash('civgraph.txt'))
+b = Make("makefile2")
+b.parse()
+b.sort()
+b.run()
